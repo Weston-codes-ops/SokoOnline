@@ -17,7 +17,8 @@
  * If a non-admin tries to access /admin/*, they get redirected.
  */
 
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 
 // ── Page imports ──────────────────────────────────────────────────
@@ -66,46 +67,69 @@ function ProtectedRoute({ children, adminOnly = false }) {
  * (hooks must be inside the AuthProvider tree)
  */
 function AppRoutes() {
+  const location = useLocation()
+  const [displayLocation, setDisplayLocation] = useState(location)
+  const [isRouteLoading, setIsRouteLoading] = useState(false)
+
+  useEffect(() => {
+    if (location.pathname !== displayLocation.pathname || location.search !== displayLocation.search) {
+      setIsRouteLoading(true)
+      const timeout = window.setTimeout(() => {
+        setDisplayLocation(location)
+        setIsRouteLoading(false)
+      }, 300)
+
+      return () => window.clearTimeout(timeout)
+    }
+  }, [location, displayLocation])
+
   return (
-    <Routes>
-      {/* ── Public routes — anyone can access ─────────────────── */}
-      <Route path="/"        element={<Homepage />} />
-      <Route path="/store"   element={<Storepage />} />
-      <Route path="/products/:slug" element={<ProductDetailpage />} />
-      <Route path="/about"   element={<Aboutpage />} />
-      <Route path="/faqs"    element={<FAQpage />} />
-      
-      <Route path="/login"   element={<Loginpage />} />
-      <Route path="/register" element={<Registerpage />} />
+    <>
+      <div className={`route-loader-overlay ${isRouteLoading ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+        <div className="route-loader-spinner" />
+      </div>
 
-      {/* ── Protected routes — must be logged in ──────────────── */}
-      <Route path="/cart" element={
-        <ProtectedRoute><Cartpage /></ProtectedRoute>
-      } />
-      <Route path="/checkout" element={
-        <ProtectedRoute><Checkoutpage /></ProtectedRoute>
-      } />
-      <Route path="/orders" element={
-        <ProtectedRoute><Orderspage /></ProtectedRoute>
-      } />
+      <main key={displayLocation.pathname} className={`page-transition-wrapper ${isRouteLoading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+        <Routes location={displayLocation}>
+          {/* ── Public routes — anyone can access ─────────────────── */}
+          <Route path="/"        element={<Homepage />} />
+          <Route path="/store"   element={<Storepage />} />
+          <Route path="/products/:slug" element={<ProductDetailpage />} />
+          <Route path="/about"   element={<Aboutpage />} />
+          <Route path="/faqs"    element={<FAQpage />} />
+          <Route path="/login"   element={<Loginpage />} />
+          <Route path="/register" element={<Registerpage />} />
 
-      {/* ── Admin routes — must be logged in as ADMIN ─────────── */}
-      <Route path="/admin/products" element={
-        <ProtectedRoute adminOnly><AdminProductsPage /></ProtectedRoute>
-      } />
-      <Route path="/admin/categories" element={
-        <ProtectedRoute adminOnly><AdminCategoriesPage /></ProtectedRoute>
-      } />
-      <Route path="/admin/orders" element={
-        <ProtectedRoute adminOnly><AdminOrdersPage /></ProtectedRoute>
-      } />
-      <Route path="/admin/promotions" element={
-  <ProtectedRoute adminOnly><AdminPromotionsPage /></ProtectedRoute>
-} />
+          {/* ── Protected routes — must be logged in ──────────────── */}
+          <Route path="/cart" element={
+            <ProtectedRoute><Cartpage /></ProtectedRoute>
+          } />
+          <Route path="/checkout" element={
+            <ProtectedRoute><Checkoutpage /></ProtectedRoute>
+          } />
+          <Route path="/orders" element={
+            <ProtectedRoute><Orderspage /></ProtectedRoute>
+          } />
 
-      {/* ── Catch-all — redirect unknown URLs to home ─────────── */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+          {/* ── Admin routes — must be logged in as ADMIN ─────────── */}
+          <Route path="/admin/products" element={
+            <ProtectedRoute adminOnly><AdminProductsPage /></ProtectedRoute>
+          } />
+          <Route path="/admin/categories" element={
+            <ProtectedRoute adminOnly><AdminCategoriesPage /></ProtectedRoute>
+          } />
+          <Route path="/admin/orders" element={
+            <ProtectedRoute adminOnly><AdminOrdersPage /></ProtectedRoute>
+          } />
+          <Route path="/admin/promotions" element={
+            <ProtectedRoute adminOnly><AdminPromotionsPage /></ProtectedRoute>
+          } />
+
+          {/* ── Catch-all — redirect unknown URLs to home ─────────── */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+    </>
   )
 }
 

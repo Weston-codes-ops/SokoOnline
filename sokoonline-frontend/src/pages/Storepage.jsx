@@ -11,7 +11,6 @@ export default function ProductsPage() {
   const [subcategories, setSubcategories] = useState([])
   const [loading, setLoading]             = useState(true)
   const [search, setSearch]               = useState(searchParams.get('search') || '')
-  const [selectedCategories, setSelectedCategories]     = useState([])
   const [selectedSubcategories, setSelectedSubcategories] = useState([])
   const [page, setPage]             = useState(0)
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -38,44 +37,27 @@ export default function ProductsPage() {
   }, [search])
 
   const subsForCat     = (catId) => subcategories.filter(s => s.categoryId === catId)
-  const selectedCatObj = categories.filter(c => selectedCategories.includes(c.id))
-  const selectedSubObj = subcategories.filter(s => selectedSubcategories.includes(s.id))
-  const hasFilters     = search || selectedCategories.length > 0 || selectedSubcategories.length > 0
+  const selectedSubcategorySet = new Set(selectedSubcategories.map(String))
+  const selectedSubObj = subcategories.filter(s => selectedSubcategorySet.has(String(s.id)))
+  const hasFilters     = search || selectedSubcategories.length > 0
 
   const displayProducts = products
-    .filter(p => selectedCategories.length === 0 || selectedCategories.includes(p.categoryId))
-    .filter(p => selectedSubcategories.length === 0 || selectedSubcategories.includes(p.subcategoryId))
+    .filter(p => selectedSubcategorySet.size === 0 || selectedSubcategorySet.has(String(p.subcategoryId)))
   const pageSize = 20
   const totalPages = Math.max(1, Math.ceil(displayProducts.length / pageSize))
   const pagedProducts = displayProducts.slice(page * pageSize, (page + 1) * pageSize)
 
   const clearFilters = () => {
     setSearch('')
-    setSelectedCategories([])
     setSelectedSubcategories([])
     setPage(0)
   }
 
-  const handleCategoryChange = (catId) => {
-    setSelectedCategories(prev => {
-      const isSelected = prev.includes(catId)
-      const next = isSelected ? prev.filter(id => id !== catId) : [...prev, catId]
-      if (isSelected) {
-        setSelectedSubcategories(prevSubs => prevSubs.filter(subId => {
-          const sub = subcategories.find(s => s.id === subId)
-          return sub?.categoryId !== catId
-        }))
-      }
-      return next
-    })
-    setPage(0)
-  }
-
-  const handleSubChange = (subId, catId) => {
+  const handleSubChange = (subId) => {
+    const nextId = String(subId)
     setSelectedSubcategories(prev => (
-      prev.includes(subId) ? prev.filter(id => id !== subId) : [...prev, subId]
+      prev.includes(nextId) ? prev.filter(id => id !== nextId) : [...prev, nextId]
     ))
-    setSelectedCategories(prev => prev.includes(catId) ? prev : [...prev, catId])
     setPage(0)
   }
 
@@ -91,12 +73,14 @@ export default function ProductsPage() {
           ${sidebarOpen ? 'fixed inset-0 z-40 bg-black/40' : 'hidden'}
           lg:block lg:relative lg:bg-transparent lg:z-0
         `}
+          aria-label="Product filters"
           onClick={e => { if (e.target === e.currentTarget) setSidebarOpen(false) }}>
 
           <div className={`
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-            fixed left-0 top-0 bottom-0 z-50 w-72 bg-[#f4fbf5] border-r border-gray-200 shadow-2xl lg:sticky lg:top-0 lg:h-screen lg:max-h-screen lg:static lg:translate-x-0 lg:shadow-none lg:w-64 lg:bg-transparent lg:border-none
-            flex flex-col overflow-y-auto lg:overflow-y-hidden transition-transform duration-300 ease-out
+            fixed left-0 top-0 bottom-0 z-50 w-72 bg-[#f4fbf5] border-r border-gray-200 shadow-2xl
+            lg:static lg:translate-x-0 lg:shadow-none lg:w-72 lg:bg-transparent lg:border-none lg:overflow-hidden lg:top-0 lg:h-[calc(100vh-4rem)]
+            flex flex-col overflow-y-auto transition-transform duration-300 ease-out
           `}>
 
             <div className="px-5 py-5 border-b border-gray-100 flex items-center justify-between">
@@ -113,64 +97,40 @@ export default function ProductsPage() {
             </div>
 
             <div className="px-5 py-4 border-b border-gray-100">
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  checked={selectedCategories.length === 0 && selectedSubcategories.length === 0}
-                  onChange={clearFilters}
-                  className="w-4 h-4 rounded border-gray-300 accent-[#0f4c35] cursor-pointer"
-                />
-                <span className={`text-sm font-semibold transition-colors ${
-                  selectedCategories.length === 0 && selectedSubcategories.length === 0 ? 'text-[#0f4c35]' : 'text-gray-700 group-hover:text-[#0f4c35]'
-                }`}>
-                  All Products
-                </span>
-              </label>
+              <p className="text-sm text-slate-600">Use the subcategory filters below to refine the product list.</p>
             </div>
 
-            <div className="px-5 py-4 space-y-5">
+            <div className="px-5 py-4 space-y-6">
               {categories.map(cat => {
-                const subs       = subsForCat(cat.id)
-                const isSelected = selectedCategories.includes(cat.id)
+                const subs = subsForCat(cat.id)
+                if (subs.length === 0) return null
                 return (
                   <div key={cat.id}>
-                    <label className="flex items-center gap-3 cursor-pointer group mb-2.5">
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={() => handleCategoryChange(cat.id)}
-                        className="w-4 h-4 rounded border-gray-300 accent-[#0f4c35] cursor-pointer"
-                      />
-                      <span className={`text-sm font-bold transition-colors ${
-                        isSelected ? 'text-[#0f4c35]' : 'text-gray-800 group-hover:text-[#0f4c35]'
-                      }`}>
-                        {cat.name}
-                      </span>
-                    </label>
-                    {subs.length > 0 && (
-                      <div className="ml-4 space-y-2 border-l-2 border-gray-100 pl-4">
-                        {subs.map(sub => {
-                          const isSubSelected = selectedSubcategories.includes(sub.id)
-                          return (
-                            <label key={sub.id} className="flex items-center gap-2.5 cursor-pointer group">
-                              <input
-                                type="checkbox"
-                                checked={isSubSelected}
-                                onChange={() => handleSubChange(sub.id, cat.id)}
-                                className="w-3.5 h-3.5 rounded border-gray-300 accent-[#0f4c35] cursor-pointer"
-                              />
-                              <span className={`text-xs transition-colors ${
-                                isSubSelected
-                                  ? 'text-[#0f4c35] font-bold'
-                                  : 'text-gray-500 group-hover:text-gray-800 font-medium'
-                              }`}>
-                                {sub.name}
-                              </span>
-                            </label>
-                          )
-                        })}
-                      </div>
-                    )}
+                    <div className="mb-3">
+                      <p className="text-sm font-bold text-gray-800">{cat.name}</p>
+                    </div>
+                    <div className="space-y-2">
+                      {subs.map(sub => {
+                        const isSubSelected = selectedSubcategorySet.has(String(sub.id))
+                        return (
+                          <label key={sub.id} className="flex items-center gap-2.5 cursor-pointer group">
+                            <input
+                              type="checkbox"
+                              checked={isSubSelected}
+                              onChange={() => handleSubChange(sub.id)}
+                              className="w-4 h-4 rounded border-gray-300 accent-[#0f4c35] cursor-pointer"
+                            />
+                            <span className={`text-sm transition-colors ${
+                              isSubSelected
+                                ? 'text-[#0f4c35] font-semibold'
+                                : 'text-gray-600 group-hover:text-[#0f4c35] font-medium'
+                            }`}>
+                              {sub.name}
+                            </span>
+                          </label>
+                        )
+                      })}
+                    </div>
                   </div>
                 )
               })}
@@ -180,18 +140,10 @@ export default function ProductsPage() {
               <div className="px-5 py-4 border-t border-gray-100 bg-[#e8f5ee]">
                 <p className="text-xs font-bold text-[#0f4c35] mb-2">Active filters</p>
                 <div className="flex flex-wrap gap-1.5">
-                  {selectedCatObj.map(cat => (
-                    <span key={cat.id} className="inline-flex items-center gap-1 text-xs bg-white text-[#0f4c35] px-2 py-0.5 rounded-full border border-[#0f4c35]/20 font-medium">
-                      {cat.name}
-                      <button onClick={() => handleCategoryChange(cat.id)}>
-                        <X size={9} />
-                      </button>
-                    </span>
-                  ))}
                   {selectedSubObj.map(sub => (
                     <span key={sub.id} className="inline-flex items-center gap-1 text-xs bg-white text-[#0f4c35] px-2 py-0.5 rounded-full border border-[#0f4c35]/20 font-medium">
                       {sub.name}
-                      <button onClick={() => handleSubChange(sub.id, sub.categoryId)}><X size={9} /></button>
+                      <button onClick={() => handleSubChange(sub.id)}><X size={9} /></button>
                     </span>
                   ))}
                 </div>
@@ -201,7 +153,7 @@ export default function ProductsPage() {
         </aside>
 
         {/* ══ MAIN CONTENT ═══════════════════════════════════════════ */}
-        <div className="flex-1 min-w-0 overflow-y-auto">
+        <main className="flex-1 min-w-0 overflow-y-auto">
           <div className="px-4 pt-6 pb-10 sm:px-6 lg:px-8">
 
             {/* Top bar — search + mobile filter + count */}
@@ -282,7 +234,7 @@ export default function ProductsPage() {
               </>
             )}
           </div>
-        </div>
+      </main>
       </div>
     </div>
   )

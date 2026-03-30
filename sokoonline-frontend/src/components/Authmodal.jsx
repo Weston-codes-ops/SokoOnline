@@ -158,8 +158,8 @@ function LoginForm({ login, onClose }) {
     setError('')
     try {
       const res = await api.post('/auth/login', form)
-      const { token, email, role, userId } = res.data
-      login({ id: userId, email, role }, token)
+      const { token, email, role, userId, name, username } = res.data
+      login({ id: userId, name: name || username || null, email, role }, token)
       onClose()
       if (role === 'ADMIN') navigate('/admin/products')
       else navigate('/store')
@@ -230,8 +230,8 @@ function RegisterForm({ login, onClose }) {
       const res = await api.post('/users/register', {
         name: form.name, email: form.email, password: form.password
       })
-      const { token, email, role, userId } = res.data
-      login({ id: userId, email, role }, token)
+      const { token, email, role, userId, name, username } = res.data
+      login({ id: userId, name: name || username || form.name, email, role }, token)
       onClose()
       navigate('/store')
     } catch (err) {

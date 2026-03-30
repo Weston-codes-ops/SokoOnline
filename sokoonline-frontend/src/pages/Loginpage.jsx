@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
 import api from '../api/axios'
 import { useAuth } from '../context/AuthContext'
@@ -9,6 +9,7 @@ import logo from '../assets/sokoonline-logo.svg'
 export default function LoginPage() {
   const { login } = useAuth()
   const navigate  = useNavigate()
+  const location  = useLocation()
 
   const [form, setForm]                 = useState({ email: '', password: '' })
   const [showPassword, setShowPassword] = useState(false)
@@ -26,11 +27,16 @@ export default function LoginPage() {
     setError('')
     try {
       const res = await api.post('/auth/login', form)
-      const { token, email, role, userId } = res.data
-      const user = { id: userId, email, role }
+      const { token, email, role, userId, name, username } = res.data
+      const user = {
+        id: userId,
+        name: name || username || null,
+        email,
+        role,
+      }
       login(user, token)
-      if (role === 'ADMIN') navigate('/admin/products')
-      else navigate('/')
+      const destination = location.state?.from || (role === 'ADMIN' ? '/admin/products' : '/')
+      navigate(destination, { replace: true })
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid email or password.')
     } finally {
@@ -77,8 +83,16 @@ export default function LoginPage() {
 
             <div className="mb-8">
               <h1 className="text-2xl font-extrabold text-gray-900 mb-1">Welcome back</h1>
-              <p className="text-sm text-gray-400">Sign in to your SokoOnline account</p>
+              <p className="text-sm text-gray-400">
+                {location.state?.from ? 'Sign in to continue to your cart.' : 'Sign in to your SokoOnline account'}
+              </p>
             </div>
+
+            {location.state?.from && (
+              <div className="mb-5 p-3 bg-yellow-50 border border-yellow-100 rounded-lg text-sm text-yellow-700">
+                Please sign in to continue adding items to your cart.
+              </div>
+            )}
 
             {error && (
               <div className="mb-5 p-3 bg-red-50 border border-red-100 rounded-lg text-sm text-red-600">
