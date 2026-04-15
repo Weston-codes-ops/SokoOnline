@@ -15,6 +15,7 @@
 
 import { Link } from 'react-router-dom'
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram } from 'lucide-react'
+import logo from '../assets/sokoonline-logo.svg'
 
 export default function Footer() {
   return (
@@ -26,18 +27,9 @@ export default function Footer() {
 
           {/* Brand column */}
           <div className="col-span-2 lg:col-span-1">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 bg-[#f59e0b] rounded-lg flex items-center justify-center">
-                <span className="text-white text-xs font-extrabold">S</span>
-              </div>
-              <span className="text-base font-extrabold">
-                Soko<span className="text-[#f59e0b]">Online</span>
-              </span>
+            <div className="flex items-center gap-2 mb-2">
+              <img src={logo} alt="SokoOnline" className="w-40 h-20" />
             </div>
-            <p className="text-white/50 text-xs leading-relaxed mb-4 max-w-xs">
-              Nairobi's trusted online marketplace for fresh produce, fashion and home essentials.
-            </p>
-            {/* Social icons */}
             <div className="flex gap-2">
               {[Facebook, Twitter, Instagram].map((Icon, i) => (
                 <a key={i} href="#"

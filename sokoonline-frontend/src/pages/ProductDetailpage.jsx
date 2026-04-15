@@ -4,6 +4,7 @@ import { ShoppingCart, Package, ArrowLeft, Plus, Minus, Check } from 'lucide-rea
 import api from '../api/axios'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import { useAuth } from '../context/AuthContext'
 
 export default function ProductDetailPage() {
   const { slug } = useParams()
@@ -16,6 +17,7 @@ export default function ProductDetailPage() {
   const [adding, setAdding]         = useState(false)
   const [added, setAdded]           = useState(false)
   const [error, setError]           = useState('')
+  const { isLoggedIn } = useAuth()
 
   useEffect(() => {
     setLoading(true)
@@ -37,6 +39,11 @@ export default function ProductDetailPage() {
   }, [slug])
 
   const handleAddToCart = async () => {
+    if (!isLoggedIn) {
+      navigate('/login', { state: { from: `/products/${slug}` } })
+      return
+    }
+
     setAdding(true)
     setError('')
     try {
@@ -182,6 +189,8 @@ export default function ProductDetailPage() {
                   <><Check size={16} /> Added to cart!</>
                 ) : adding ? (
                   'Adding...'
+                ) : !isLoggedIn ? (
+                  'Sign in to add to cart'
                 ) : (
                   <><ShoppingCart size={16} /> Add to cart</>
                 )}
@@ -192,6 +201,13 @@ export default function ProductDetailPage() {
                   className="mt-3 text-center text-xs text-[#0f4c35] font-semibold hover:underline">
                   View cart →
                 </Link>
+              )}
+
+              {!isLoggedIn && (
+                <div className="mt-4 text-sm text-gray-500">
+                  Please <Link to="/login" state={{ from: `/products/${slug}` }} className="text-[#0f4c35] font-semibold hover:underline">sign in</Link> or{' '}
+                  <Link to="/register" className="text-[#0f4c35] font-semibold hover:underline">create an account</Link> to add this item to your cart.
+                </div>
               )}
             </div>
           </div>

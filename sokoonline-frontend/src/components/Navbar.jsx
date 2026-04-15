@@ -108,13 +108,13 @@ export default function Navbar({ variant = 'default' }) {
     <>
       <nav className="bg-white border-b border-gray-100 sticky top-0 z-40">
         <div className="w-full px-6">
-          <div className="flex items-center h-14 gap-8">
+          <div className="flex items-center h-14 gap-8 w-full">
 
             {/* Logo */}
             <Logo />
 
             {/* Nav links — desktop */}
-            <div className="hidden md:flex items-center gap-6 flex-1">
+            <div className="hidden md:flex flex-1 justify-center items-center gap-6">
               <NavLink to="/store"  label="Store"  active={isActive('/store')} />
               <NavLink to="/about"  label="About"  active={isActive('/about')} />
               <NavLink to="/faqs"   label="FAQs"   active={isActive('/faqs')} />
@@ -148,7 +148,7 @@ export default function Navbar({ variant = 'default' }) {
             </div>
 
             {/* Right side */}
-            <div className="flex items-center gap-2 ml-auto">
+            <div className="flex items-center gap-2 justify-end">
 
               {user ? (
                 <>

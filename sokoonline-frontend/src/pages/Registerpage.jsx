@@ -39,8 +39,13 @@ export default function RegisterPage() {
         email: form.email,
         password: form.password,
       })
-      const { token, email, role, userId } = res.data
-      const user = { id: userId, email, role }
+      const { token, email, role, userId, name, username } = res.data
+      const user = {
+        id: userId,
+        name: name || username || form.name,
+        email,
+        role,
+      }
       login(user, token)
       navigate('/')
     } catch (err) {

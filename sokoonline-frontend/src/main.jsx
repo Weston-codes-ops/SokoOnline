@@ -11,7 +11,7 @@
  * - Has no effect in production builds
  */
 
-import { StrictMode } from 'react'
+import { StrictMode } from 'react' 
 import { createRoot } from 'react-dom/client'
 import './index.css'   // Global styles including Tailwind
 import App from './App'

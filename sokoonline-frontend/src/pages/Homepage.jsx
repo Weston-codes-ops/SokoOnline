@@ -21,6 +21,7 @@ const PERKS = [
 ]
 
 const BADGES = ['HOT DEAL', 'NEW', '20% OFF', 'POPULAR', 'LIMITED', 'FRESH']
+const HERO_TITLE = 'Find fresh essentials, trending picks and everyday deals in one place.'
 
 export default function HomePage() {
   const [search, setSearch]           = useState('')
@@ -28,6 +29,7 @@ export default function HomePage() {
   const [promoItems, setPromoItems]   = useState([])
   const [specialized, setSpecialized] = useState({})
   const [authModal, setAuthModal]     = useState(null)
+  const [heroVisible, setHeroVisible] = useState(false)
   const navigate = useNavigate()
   const { user, logout } = useAuth()
 
@@ -49,6 +51,11 @@ export default function HomePage() {
       })
       setSpecialized(grouped)
     }).catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => setHeroVisible(true), 80)
+    return () => window.clearTimeout(timeout)
   }, [])
 
   const handleSearch = (e) => {
@@ -112,8 +119,8 @@ export default function HomePage() {
               <p className="text-[#f59e0b] text-xs font-semibold uppercase tracking-[0.28em] mb-4">
                 Nairobi's online marketplace
               </p>
-              <h1 className="text-5xl sm:text-6xl font-extrabold text-white leading-tight mb-6 max-w-2xl">
-                Find fresh essentials, trending picks and everyday deals in one place.
+              <h1 className={`text-5xl sm:text-6xl font-extrabold text-white leading-tight mb-6 max-w-2xl transition-all duration-700 ease-out ${heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+                Fresh essentials, trending picks and everyday deals in one place.
               </h1>
               <p className="text-white/75 text-base sm:text-lg max-w-xl leading-relaxed mb-8">
                 Shop groceries, fashion and home essentials with fast delivery, trusted sellers, and a polished online experience built for Nairobi.
