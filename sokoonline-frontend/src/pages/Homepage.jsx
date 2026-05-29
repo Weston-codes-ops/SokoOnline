@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Search, ArrowRight, Truck, Shield, Star, ShoppingBag } from 'lucide-react'
 import api from '../api/axios'
 import Footer from '../components/Footer'
-import AuthModal from '../components/AuthModal'
+import Authmodal from '../components/Authmodal'
 import { useAuth } from '../context/AuthContext'
 import logo from '../assets/sokoonline-logo.svg'
 import PromoSection from '../components/PromoSlider'
@@ -228,7 +228,7 @@ export default function HomePage() {
       </div>
 
       {authModal && (
-        <AuthModal defaultTab={authModal} onClose={() => setAuthModal(null)} />
+        <Authmodal defaultTab={authModal} onClose={() => setAuthModal(null)} />
       )}
 
       {/* ══ PROMO SECTION ═════════════════════════════════════════════ */}

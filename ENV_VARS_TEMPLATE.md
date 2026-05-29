@@ -6,7 +6,7 @@
 ```
 DATABASE_URL=postgresql://sokoonline:YOUR_PASSWORD@host:5432/sokoonline
 DATABASE_USERNAME=sokoonline
-DATABASE_PASSWORD=YOUR_PASSWORD_FROM_RENDER
+DATABASE_PASSWORD=38QO4idPmpyRWSGzY0UGgwKY4Tt0rxyP
 ```
 
 ### JWT Configuration
@@ -22,13 +22,14 @@ CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 ```
 
-### M-Pesa Configuration (Payment)
+### M-Pesa Configuration (Payment) - OPTIONAL (Not Needed)
 ```
-MPESA_CONSUMER_KEY=your_mpesa_consumer_key
-MPESA_CONSUMER_SECRET=your_mpesa_consumer_secret
-MPESA_SHORTCODE=your_mpesa_shortcode
-MPESA_PASSKEY=your_mpesa_passkey
-MPESA_CALLBACK_URL=https://sokoonline-api.onrender.com/api/mpesa/callback
+# SKIP THESE IF NOT USING M-PESA
+# MPESA_CONSUMER_KEY=your_mpesa_consumer_key
+# MPESA_CONSUMER_SECRET=your_mpesa_consumer_secret
+# MPESA_SHORTCODE=your_mpesa_shortcode
+# MPESA_PASSKEY=your_mpesa_passkey
+# MPESA_CALLBACK_URL=https://sokoonline-api.onrender.com/api/mpesa/callback
 ```
 
 ## How to Get These Values
@@ -55,7 +56,7 @@ openssl rand -base64 32
 - Go to Account Settings → API Keys
 - Copy Cloud Name, API Key, API Secret
 
-### 4. M-Pesa
+### 4. M-Pesa (Optional - Only if implementing payment)
 - Register at https://www.safaricom.co.ke/business/mpesa-apis
 - Get credentials from developer portal
 - Set callback URL to your Render app URL
@@ -72,12 +73,9 @@ JWT_EXPIRATION_MS=86400000
 CLOUDINARY_CLOUD_NAME=dxyz123abc
 CLOUDINARY_API_KEY=123456789012345
 CLOUDINARY_API_SECRET=abc_xyz_123_secret_key
-MPESA_CONSUMER_KEY=your_consumer_key
-MPESA_CONSUMER_SECRET=your_consumer_secret
-MPESA_SHORTCODE=123456
-MPESA_PASSKEY=your_passkey
-MPESA_CALLBACK_URL=https://sokoonline-api.onrender.com/api/mpesa/callback
 ```
+
+**Note:** M-Pesa variables are omitted since payment integration is not being used.
 
 ---
 

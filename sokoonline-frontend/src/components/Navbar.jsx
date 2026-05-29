@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { ShoppingCart, User, LogOut, Search, X, Menu, ChevronDown } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
-import AuthModal from './AuthModal'
+import Authmodal from './Authmodal'
 import logo from '../assets/sokoonline-logo.svg'
 
 export default function Navbar({ variant = 'default' }) {
@@ -99,7 +99,7 @@ export default function Navbar({ variant = 'default' }) {
           </div>
         </div>
       </nav>
-      {authModal && <AuthModal defaultTab={authModal} onClose={() => setAuthModal(null)} />}
+      {authModal && <Authmodal defaultTab={authModal} onClose={() => setAuthModal(null)} />}
     </>
   )
 

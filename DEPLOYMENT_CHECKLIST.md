@@ -50,11 +50,11 @@
   - [ ] `CLOUDINARY_CLOUD_NAME`
   - [ ] `CLOUDINARY_API_KEY`
   - [ ] `CLOUDINARY_API_SECRET`
-  - [ ] `MPESA_CONSUMER_KEY`
-  - [ ] `MPESA_CONSUMER_SECRET`
-  - [ ] `MPESA_SHORTCODE`
-  - [ ] `MPESA_PASSKEY`
-  - [ ] `MPESA_CALLBACK_URL`
+  - [ ] ~~`MPESA_CONSUMER_KEY`~~ (Not needed)
+  - [ ] ~~`MPESA_CONSUMER_SECRET`~~ (Not needed)
+  - [ ] ~~`MPESA_SHORTCODE`~~ (Not needed)
+  - [ ] ~~`MPESA_PASSKEY`~~ (Not needed)
+  - [ ] ~~`MPESA_CALLBACK_URL`~~ (Not needed)
 
 ### Step 3: Wait for Deployment
 - [ ] Monitor Logs tab (5-10 min)

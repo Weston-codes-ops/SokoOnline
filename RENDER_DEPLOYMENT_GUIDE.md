@@ -58,12 +58,9 @@ JWT_EXPIRATION_MS=86400000
 CLOUDINARY_CLOUD_NAME=your-cloudinary-name
 CLOUDINARY_API_KEY=your-api-key
 CLOUDINARY_API_SECRET=your-api-secret
-MPESA_CONSUMER_KEY=your-mpesa-key
-MPESA_CONSUMER_SECRET=your-mpesa-secret
-MPESA_SHORTCODE=your-shortcode
-MPESA_PASSKEY=your-passkey
-MPESA_CALLBACK_URL=https://your-render-url/api/mpesa/callback
 ```
+
+Note: M-Pesa variables are not needed for this deployment.
 
 ### Step 1.4: Update Application Properties
 Ensure [src/main/resources/application.properties](src/main/resources/application.properties) has:
@@ -81,11 +78,12 @@ cloudinary.cloud-name=${CLOUDINARY_CLOUD_NAME}
 cloudinary.api-key=${CLOUDINARY_API_KEY}
 cloudinary.api-secret=${CLOUDINARY_API_SECRET}
 
-mpesa.consumer-key=${MPESA_CONSUMER_KEY}
-mpesa.consumer-secret=${MPESA_CONSUMER_SECRET}
-mpesa.shortcode=${MPESA_SHORTCODE}
-mpesa.passkey=${MPESA_PASSKEY}
-mpesa.callback-url=${MPESA_CALLBACK_URL}
+# M-Pesa configuration - NOT NEEDED for this deployment
+# mpesa.consumer-key=${MPESA_CONSUMER_KEY}
+# mpesa.consumer-secret=${MPESA_CONSUMER_SECRET}
+# mpesa.shortcode=${MPESA_SHORTCODE}
+# mpesa.passkey=${MPESA_PASSKEY}
+# mpesa.callback-url=${MPESA_CALLBACK_URL}
 
 server.port=${PORT:8080}
 ```
@@ -171,11 +169,6 @@ git push origin main
      - `CLOUDINARY_CLOUD_NAME`: your-value
      - `CLOUDINARY_API_KEY`: your-value
      - `CLOUDINARY_API_SECRET`: your-value
-     - `MPESA_CONSUMER_KEY`: your-value
-     - `MPESA_CONSUMER_SECRET`: your-value
-     - `MPESA_SHORTCODE`: your-value
-     - `MPESA_PASSKEY`: your-value
-     - `MPESA_CALLBACK_URL`: https://yourdomain.onrender.com/api/mpesa/callback
 
 5. Click **Create Web Service**
 
@@ -254,12 +247,12 @@ curl -X POST https://sokoonline-api.onrender.com/api/auth/register \
 curl https://sokoonline-api.onrender.com/api/products
 ```
 
-### Step 3.5: Fix M-Pesa Callback URL
+### Step 3.5: Verify All Services Running
 
-Update environment variable:
-```
-MPESA_CALLBACK_URL=https://sokoonline-api.onrender.com/api/mpesa/callback
-```
+Check the Render dashboard to confirm:
+- PostgreSQL service status: "Available"
+- Web Service status: "Live"
+- No errors in service logs
 
 ---
 
