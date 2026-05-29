@@ -15,10 +15,15 @@
 
 import axios from 'axios'
 
+// Use environment variable if available, otherwise default to relative path
+// In development: http://localhost:8080/api
+// In production: /api (served from same backend)
+const baseURL = import.meta.env.VITE_API_URL || '/api'
+
 const api = axios.create({
   // All requests will be prefixed with this URL
-  // e.g. api.get('/products') → GET http://localhost:8080/api/products
-  baseURL: 'http://localhost:8080/api',
+  // e.g. api.get('/products') → GET /api/products (same server)
+  baseURL: baseURL,
 })
 
 /*

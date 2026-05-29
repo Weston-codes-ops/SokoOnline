@@ -24,7 +24,14 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addMapping("/api/**")          // Apply to all API routes
                 .allowedOrigins(
                         "http://localhost:3000",     // React dev server
-                        "http://localhost:5173"      // Vite dev server (if you use Vite)
+                        "http://localhost:5173",     // Vite dev server
+                        "http://localhost:8080",     // Local backend
+                        "http://127.0.0.1:3000",
+                        "http://127.0.0.1:5173",
+                        "http://127.0.0.1:8080"
+                        // Add Render production URLs after deployment:
+                        // "https://sokoonline-api.onrender.com",
+                        // "https://sokoonline-frontend.onrender.com"
                 )
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("*")             // Allow all headers including Authorization
