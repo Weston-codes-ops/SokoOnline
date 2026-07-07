@@ -5,9 +5,9 @@ import com.westoncodesops.sokoonline.dtos.response.UserResponse;
 
 public interface UserServiceInterface {
 
-    UserResponse register(RegisterRequest request);
+    UserService.RegisterResponse register(RegisterRequest request);
 
-    UserResponse createAdmin(com.westoncodesops.sokoonline.dtos.requests.AdminRegisterRequest request);
+    UserService.RegisterResponse createAdmin(com.westoncodesops.sokoonline.dtos.requests.AdminRegisterRequest request);
 
     UserResponse getUserById(Long id);
 

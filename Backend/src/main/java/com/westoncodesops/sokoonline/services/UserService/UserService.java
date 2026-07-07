@@ -10,6 +10,7 @@ import com.westoncodesops.sokoonline.repositories.UserRepository;
 import com.westoncodesops.sokoonline.dtos.requests.AdminRegisterRequest;
 import com.westoncodesops.sokoonline.dtos.requests.RegisterRequest;
 import com.westoncodesops.sokoonline.dtos.response.UserResponse;
+import com.westoncodesops.sokoonline.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,14 +24,17 @@ public class UserService implements UserServiceInterface {
     private final UserRepository userRepository;
     private final CartRepository cartRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Value("${app.admin.create-secret:admin-create-secret}")
     private String adminCreateSecret;
 
+    // New DTO for register response with token
+    public record RegisterResponse(String token, Long userId, String name, String email, String role) {}
 
     @Override
     @Transactional
-    public UserResponse register(RegisterRequest request) {
+    public RegisterResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.email())){
             throw new BadRequestException("Email already in use: "+ request.email());
         }
@@ -48,13 +52,15 @@ public class UserService implements UserServiceInterface {
         Cart cart = Cart.builder().user(user).build();
         cartRepository.save(cart);
 
-        return toResponse(user);
+        // Generate JWT token
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name(), user.getId());
 
+        return new RegisterResponse(token, user.getId(), user.getName(), user.getEmail(), user.getRole().name());
     }
 
     @Override
     @Transactional
-    public UserResponse createAdmin(AdminRegisterRequest request) {
+    public RegisterResponse createAdmin(AdminRegisterRequest request) {
         String expectedSecret = adminCreateSecret == null ? "" : adminCreateSecret.trim();
         String providedSecret = request.adminSecret() == null ? "" : request.adminSecret().trim();
 
@@ -78,7 +84,10 @@ public class UserService implements UserServiceInterface {
         Cart cart = Cart.builder().user(admin).build();
         cartRepository.save(cart);
 
-        return toResponse(admin);
+        // Generate JWT token for admin too
+        String token = jwtUtil.generateToken(admin.getEmail(), admin.getRole().name(), admin.getId());
+
+        return new RegisterResponse(token, admin.getId(), admin.getName(), admin.getEmail(), admin.getRole().name());
     }
 
     @Override
